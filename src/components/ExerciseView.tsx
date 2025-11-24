@@ -18,6 +18,47 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   const totalSteps = exercise.steps.length;
   const showComplete = currentStepIndex >= totalSteps;
 
+  // Compute cumulative visual elements and code based on completed steps
+  const getCurrentVisualElements = () => {
+    // Start with the before state
+    const elements = [...(exercise.beforeState.visualElements || [])];
+    
+    // Add visual elements from each completed step
+    for (let i = 0; i < currentStepIndex; i++) {
+      const step = exercise.steps[i];
+      if (step.visualElements) {
+        // Merge elements: update existing ones by id, add new ones
+        step.visualElements.forEach(newElement => {
+          const existingIndex = elements.findIndex(el => el.id === newElement.id);
+          if (existingIndex >= 0) {
+            elements[existingIndex] = newElement;
+          } else {
+            elements.push(newElement);
+          }
+        });
+      }
+    }
+    return elements;
+  };
+
+  const getCurrentCode = () => {
+    // Start with the before state code
+    let code = exercise.beforeState.code;
+    
+    // Use the most recent step's code if available
+    for (let i = currentStepIndex - 1; i >= 0; i--) {
+      const step = exercise.steps[i];
+      if (step.code) {
+        code = step.code;
+        break;
+      }
+    }
+    return code;
+  };
+
+  const currentVisualElements = getCurrentVisualElements();
+  const currentCode = getCurrentCode();
+
   const handleNextStep = () => {
     if (currentStepIndex < totalSteps) {
       setIsAnimating(true);
@@ -127,7 +168,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
           gap: '2rem',
           marginBottom: '2rem',
         }}>
-          {/* Visual Canvas - Before State */}
+          {/* Visual Canvas - Current Progress State */}
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -145,14 +186,14 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
               color: '#333',
               fontSize: '1.3rem',
             }}>
-              Before
+              Current Progress
             </h2>
             <VisualCanvas
-              elements={exercise.beforeState.visualElements || []}
+              elements={currentVisualElements}
               highlights={!showComplete ? currentStep?.highlights || [] : []}
               isAnimating={isAnimating}
             />
-            {exercise.beforeState.code && (
+            {currentCode && (
               <pre style={{
                 backgroundColor: '#f5f5f5',
                 padding: '1rem',
@@ -162,7 +203,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                 marginTop: '1rem',
                 color: '#333',
               }}>
-                {exercise.beforeState.code}
+                {currentCode}
               </pre>
             )}
           </motion.div>
@@ -185,7 +226,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
               color: '#333',
               fontSize: '1.3rem',
             }}>
-              After {showComplete && '✓'}
+              Goal {showComplete && '✓'}
             </h2>
             <VisualCanvas
               elements={exercise.afterState.visualElements || []}
