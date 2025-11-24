@@ -288,7 +288,7 @@ export default function ExerciseView({ exercise }: ExerciseViewProps) {
           }}>
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${((currentStepIndex) / totalSteps) * 100}%` }}
+              animate={{ width: `${((currentStepIndex + 1) / totalSteps) * 100}%` }}
               transition={{ duration: 0.5 }}
               style={{
                 height: '100%',

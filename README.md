@@ -24,7 +24,7 @@ An interactive digital classroom application built with React, TypeScript, and V
 
 ### Prerequisites
 
-- Node.js 16.x or higher
+- Node.js 18.x or higher
 - npm or yarn
 
 ### Installation

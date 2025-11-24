@@ -131,7 +131,10 @@ export default function VisualCanvas({
           animate={{ opacity: 1 }}
           style={{
             position: 'absolute',
-            inset: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
             backgroundColor: 'rgba(76, 175, 80, 0.1)',
             display: 'flex',
             alignItems: 'center',
@@ -167,7 +170,10 @@ export default function VisualCanvas({
       {elements.length === 0 && (
         <div style={{
           position: 'absolute',
-          inset: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
