@@ -1,3 +1,7 @@
+
+# WARNING: THIS IS WIP AND NOT READY FOR USE
+
+
 # Digital Classroom
 
 An interactive digital classroom application built with React, TypeScript, and Vite. This application provides a beautiful, animated learning experience that guides students through programming concepts step-by-step.
