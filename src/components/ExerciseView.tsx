@@ -6,9 +6,10 @@ import VisualCanvas from './VisualCanvas';
 
 interface ExerciseViewProps {
   exercise: Exercise;
+  classroomId: string;
 }
 
-export default function ExerciseView({ exercise }: ExerciseViewProps) {
+export default function ExerciseView({ exercise, classroomId }: ExerciseViewProps) {
   const navigate = useNavigate();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -65,7 +66,7 @@ export default function ExerciseView({ exercise }: ExerciseViewProps) {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => navigate('/')}
+            onClick={() => navigate(`/classroom/${classroomId}`)}
             style={{
               backgroundColor: 'rgba(255, 255, 255, 0.2)',
               color: 'white',

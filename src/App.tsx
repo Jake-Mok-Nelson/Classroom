@@ -1,25 +1,44 @@
 import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
+import ClassroomListView from './components/ClassroomListView';
 import ClassroomView from './components/ClassroomView';
 import ExerciseView from './components/ExerciseView';
-import { sampleClassroom } from './data/sampleData';
+import { sampleClassrooms } from './data/sampleData';
+
+function ClassroomRoute() {
+  const { classroomId } = useParams<{ classroomId: string }>();
+  const classroom = sampleClassrooms.find(c => c.id === classroomId);
+  
+  if (!classroom) {
+    return <div>Classroom not found</div>;
+  }
+  
+  return <ClassroomView classroom={classroom} />;
+}
 
 function ExerciseRoute() {
-  const { exerciseId } = useParams<{ exerciseId: string }>();
-  const exercise = sampleClassroom.exercises.find(ex => ex.id === exerciseId);
+  const { classroomId, exerciseId } = useParams<{ classroomId: string; exerciseId: string }>();
+  const classroom = sampleClassrooms.find(c => c.id === classroomId);
+  
+  if (!classroom) {
+    return <div>Classroom not found</div>;
+  }
+  
+  const exercise = classroom.exercises.find(ex => ex.id === exerciseId);
   
   if (!exercise) {
     return <div>Exercise not found</div>;
   }
   
-  return <ExerciseView exercise={exercise} />;
+  return <ExerciseView exercise={exercise} classroomId={classroomId!} />;
 }
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ClassroomView classroom={sampleClassroom} />} />
-        <Route path="/exercise/:exerciseId" element={<ExerciseRoute />} />
+        <Route path="/" element={<ClassroomListView classrooms={sampleClassrooms} />} />
+        <Route path="/classroom/:classroomId" element={<ClassroomRoute />} />
+        <Route path="/classroom/:classroomId/exercise/:exerciseId" element={<ExerciseRoute />} />
       </Routes>
     </BrowserRouter>
   );
