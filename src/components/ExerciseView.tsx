@@ -20,8 +20,13 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
 
   // Compute cumulative visual elements and code based on completed steps
   const getCurrentVisualElements = () => {
-    // Start with the before state
-    const elements = [...(exercise.beforeState.visualElements || [])];
+    // Use a Map for O(1) lookups when merging elements
+    const elementMap = new Map<string, typeof exercise.beforeState.visualElements extends (infer T)[] | undefined ? T : never>();
+    
+    // Start with the before state elements
+    (exercise.beforeState.visualElements || []).forEach(el => {
+      elementMap.set(el.id, el);
+    });
     
     // Add visual elements from each completed step
     for (let i = 0; i < currentStepIndex; i++) {
@@ -29,16 +34,12 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
       if (step.visualElements) {
         // Merge elements: update existing ones by id, add new ones
         step.visualElements.forEach(newElement => {
-          const existingIndex = elements.findIndex(el => el.id === newElement.id);
-          if (existingIndex >= 0) {
-            elements[existingIndex] = newElement;
-          } else {
-            elements.push(newElement);
-          }
+          elementMap.set(newElement.id, newElement);
         });
       }
     }
-    return elements;
+    
+    return Array.from(elementMap.values());
   };
 
   const getCurrentCode = () => {
