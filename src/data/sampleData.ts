@@ -1,10 +1,11 @@
 import type { ClassRoom } from '../types';
 
-export const sampleClassroom: ClassRoom = {
-  id: 'classroom-1',
-  name: 'Introduction to Web Development',
-  description: 'Learn the fundamentals of HTML, CSS, and JavaScript through interactive exercises',
-  exercises: [
+export const sampleClassrooms: ClassRoom[] = [
+  {
+    id: 'classroom-1',
+    name: 'Introduction to Web Development',
+    description: 'Learn the fundamentals of HTML, CSS, and JavaScript through interactive exercises',
+    exercises: [
     {
       id: 'exercise-1',
       title: 'Creating a Button',
@@ -319,4 +320,184 @@ export const sampleClassroom: ClassRoom = {
       ],
     },
   ],
-};
+  },
+  {
+    id: 'classroom-2',
+    name: 'Advanced CSS Techniques',
+    description: 'Master CSS Grid, Animations, and Modern Layout Techniques',
+    exercises: [
+      {
+        id: 'exercise-4',
+        title: 'CSS Grid Layout',
+        description: 'Learn how to create complex layouts with CSS Grid',
+        category: 'CSS',
+        difficulty: 'advanced',
+        beforeState: {
+          code: '.container {\n  /* Add grid styles here */\n}',
+          visualElements: [
+            {
+              id: 'box-1',
+              type: 'div',
+              x: 50,
+              y: 50,
+              width: 80,
+              height: 80,
+              content: '1',
+              style: {
+                backgroundColor: '#e74c3c',
+                color: 'white',
+              },
+            },
+            {
+              id: 'box-2',
+              type: 'div',
+              x: 150,
+              y: 50,
+              width: 80,
+              height: 80,
+              content: '2',
+              style: {
+                backgroundColor: '#3498db',
+                color: 'white',
+              },
+            },
+          ],
+        },
+        afterState: {
+          code: '.container {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n}',
+          visualElements: [
+            {
+              id: 'box-1',
+              type: 'div',
+              x: 50,
+              y: 100,
+              width: 80,
+              height: 80,
+              content: '1',
+              style: {
+                backgroundColor: '#e74c3c',
+                color: 'white',
+              },
+            },
+            {
+              id: 'box-2',
+              type: 'div',
+              x: 150,
+              y: 100,
+              width: 80,
+              height: 80,
+              content: '2',
+              style: {
+                backgroundColor: '#3498db',
+                color: 'white',
+              },
+            },
+            {
+              id: 'box-3',
+              type: 'div',
+              x: 250,
+              y: 100,
+              width: 80,
+              height: 80,
+              content: '3',
+              style: {
+                backgroundColor: '#2ecc71',
+                color: 'white',
+              },
+            },
+          ],
+        },
+        steps: [
+          {
+            id: 'step-1',
+            title: 'Add display: grid',
+            description: 'Set the container to use CSS Grid',
+            highlights: [
+              {
+                id: 'highlight-1',
+                x: 40,
+                y: 40,
+                width: 300,
+                height: 200,
+                description: 'display: grid',
+              },
+            ],
+            duration: 1500,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'classroom-3',
+    name: 'React Fundamentals',
+    description: 'Build modern web applications with React and component-based architecture',
+    exercises: [
+      {
+        id: 'exercise-5',
+        title: 'React Components',
+        description: 'Learn how to create reusable React components',
+        category: 'React',
+        difficulty: 'intermediate',
+        beforeState: {
+          code: 'function App() {\n  // Create component here\n}',
+          visualElements: [
+            {
+              id: 'placeholder',
+              type: 'div',
+              x: 100,
+              y: 100,
+              width: 200,
+              height: 100,
+              content: 'Empty',
+              style: {
+                backgroundColor: '#f0f0f0',
+                border: '2px dashed #ccc',
+              },
+            },
+          ],
+        },
+        afterState: {
+          code: 'function App() {\n  return <h1>Hello React!</h1>;\n}',
+          visualElements: [
+            {
+              id: 'component',
+              type: 'div',
+              x: 100,
+              y: 100,
+              width: 200,
+              height: 100,
+              content: 'Hello React!',
+              style: {
+                backgroundColor: '#61dafb',
+                color: 'white',
+                fontSize: '24px',
+              },
+            },
+          ],
+        },
+        steps: [
+          {
+            id: 'step-1',
+            title: 'Add JSX return',
+            description: 'Return JSX from the component function',
+            highlights: [
+              {
+                id: 'highlight-1',
+                x: 100,
+                y: 100,
+                width: 200,
+                height: 100,
+                description: 'return <h1>Hello React!</h1>',
+              },
+            ],
+            duration: 1500,
+          },
+        ],
+      },
+    ],
+  },
+];
+
+// Export the first classroom for backward compatibility
+export const sampleClassroom = sampleClassrooms[0];

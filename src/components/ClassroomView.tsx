@@ -37,6 +37,28 @@ export default function ClassroomView({ classroom }: ClassroomViewProps) {
           margin: '0 auto',
         }}
       >
+        <motion.button
+          onClick={() => navigate('/')}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            color: 'white',
+            border: '2px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '8px',
+            padding: '0.75rem 1.5rem',
+            fontSize: '1rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            marginBottom: '2rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
+          ← Back to Classrooms
+        </motion.button>
+
         <h1 style={{
           color: 'white',
           fontSize: '3rem',
@@ -66,7 +88,7 @@ export default function ClassroomView({ classroom }: ClassroomViewProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-              onClick={() => navigate(`/exercise/${exercise.id}`)}
+              onClick={() => navigate(`/classroom/${classroom.id}/exercise/${exercise.id}`)}
               style={{
                 backgroundColor: 'white',
                 borderRadius: '12px',
