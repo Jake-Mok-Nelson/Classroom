@@ -121,7 +121,7 @@ export const sampleClassrooms: ClassRoom[] = [
           id: 'step-2',
           title: 'Add button text',
           description: 'Add the text that will appear on the button',
-          why: 'Button text tells users what action the button performs. Clear, descriptive text improves usability and helps screen readers announce the button\'s purpose.',
+          why: "Button text tells users what action the button performs. Clear, descriptive text improves usability and helps screen readers announce the button's purpose.",
           task: 'Add the text "Click Me" between the opening and closing button tags',
           expectedCode: 'Click Me',
           highlights: [

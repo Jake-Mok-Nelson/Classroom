@@ -113,12 +113,16 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   const currentCode = getCurrentCode();
   const nextPreview = getNextStepPreview();
 
+  // Delay before auto-advancing after correct answer (in milliseconds)
+  const CORRECT_ANSWER_DELAY = 800;
+
   // Validate user input against expected code
   const validateInput = () => {
     if (!currentStep?.expectedCode) return true;
     const normalizedInput = userInput.trim().toLowerCase();
     const normalizedExpected = currentStep.expectedCode.trim().toLowerCase();
-    return normalizedInput.includes(normalizedExpected) || normalizedExpected.includes(normalizedInput);
+    // Check if user input contains the expected code (case-insensitive)
+    return normalizedInput.includes(normalizedExpected);
   };
 
   const handleSubmitStep = () => {
@@ -129,7 +133,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
       if (isCorrect) {
         setTimeout(() => {
           handleNextStep();
-        }, 800);
+        }, CORRECT_ANSWER_DELAY);
       }
     } else {
       handleNextStep();
