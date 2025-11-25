@@ -13,6 +13,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   const navigate = useNavigate();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showGoalPreview, setShowGoalPreview] = useState(false);
 
   const currentStep = exercise.steps[currentStepIndex];
   const totalSteps = exercise.steps.length;
@@ -57,8 +58,24 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
     return code;
   };
 
+  // Get the next step's visual elements and code to show as preview
+  const getNextStepPreview = () => {
+    if (currentStepIndex >= totalSteps) {
+      return { elements: exercise.afterState.visualElements || [], code: exercise.afterState.code };
+    }
+    
+    const step = exercise.steps[currentStepIndex];
+    if (step.visualElements) {
+      return { elements: step.visualElements, code: step.code };
+    }
+    
+    // If no visual elements in current step, return current state
+    return { elements: getCurrentVisualElements(), code: getCurrentCode() };
+  };
+
   const currentVisualElements = getCurrentVisualElements();
   const currentCode = getCurrentCode();
+  const nextPreview = getNextStepPreview();
 
   const handleNextStep = () => {
     if (currentStepIndex < totalSteps) {
@@ -82,6 +99,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
 
   const handleReset = () => {
     setCurrentStepIndex(0);
+    setShowGoalPreview(false);
   };
 
   return (
@@ -94,7 +112,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         style={{
-          maxWidth: '1400px',
+          maxWidth: '1000px',
           margin: '0 auto',
         }}
       >
@@ -149,121 +167,85 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
           style={{
             backgroundColor: 'white',
             borderRadius: '12px',
-            padding: '2rem',
-            marginBottom: '2rem',
+            padding: '1.5rem 2rem',
+            marginBottom: '1.5rem',
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
           }}
         >
-          <h1 style={{ margin: 0, marginBottom: '0.5rem', color: '#333' }}>
-            {exercise.title}
-          </h1>
-          <p style={{ margin: 0, color: '#666', fontSize: '1.1rem' }}>
-            {exercise.description}
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h1 style={{ margin: 0, marginBottom: '0.5rem', color: '#333', fontSize: '1.8rem' }}>
+                {exercise.title}
+              </h1>
+              <p style={{ margin: 0, color: '#666', fontSize: '1rem' }}>
+                {exercise.description}
+              </p>
+            </div>
+            {/* Step Progress Indicator */}
+            <div style={{
+              display: 'flex',
+              gap: '0.5rem',
+              alignItems: 'center',
+            }}>
+              {exercise.steps.map((_, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: index * 0.05 }}
+                  style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: index < currentStepIndex 
+                      ? '#4CAF50' 
+                      : index === currentStepIndex 
+                        ? '#667eea' 
+                        : '#e0e0e0',
+                    border: index === currentStepIndex ? '2px solid #667eea' : 'none',
+                    boxShadow: index === currentStepIndex ? '0 0 0 3px rgba(102, 126, 234, 0.3)' : 'none',
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </motion.div>
 
-        {/* Main Content Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '2rem',
-          marginBottom: '2rem',
-        }}>
-          {/* Visual Canvas - Current Progress State */}
+        {/* Current Step Card - Focus on one step at a time */}
+        {!showComplete ? (
           <motion.div
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
             style={{
               backgroundColor: 'white',
               borderRadius: '12px',
-              padding: '1.5rem',
+              marginBottom: '1.5rem',
               boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+              overflow: 'hidden',
             }}
           >
-            <h2 style={{ 
-              margin: 0, 
-              marginBottom: '1rem', 
-              color: '#333',
-              fontSize: '1.3rem',
+            {/* Step Header */}
+            <div style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              padding: '1rem 1.5rem',
+              color: 'white',
             }}>
-              Current Progress
-            </h2>
-            <VisualCanvas
-              elements={currentVisualElements}
-              highlights={!showComplete ? currentStep?.highlights || [] : []}
-              isAnimating={isAnimating}
-            />
-            {currentCode && (
-              <pre style={{
-                backgroundColor: '#f5f5f5',
-                padding: '1rem',
-                borderRadius: '8px',
-                overflow: 'auto',
-                fontSize: '0.9rem',
-                marginTop: '1rem',
-                color: '#333',
-              }}>
-                {currentCode}
-              </pre>
-            )}
-          </motion.div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.9rem', opacity: 0.9 }}>
+                  Step {currentStepIndex + 1} of {totalSteps}
+                </span>
+                <span style={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '12px',
+                  fontSize: '0.85rem',
+                }}>
+                  {Math.round((currentStepIndex / totalSteps) * 100)}% Complete
+                </span>
+              </div>
+            </div>
 
-          {/* Visual Canvas - After State */}
-          <motion.div
-            initial={{ x: 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            style={{
-              backgroundColor: 'white',
-              borderRadius: '12px',
-              padding: '1.5rem',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-            }}
-          >
-            <h2 style={{ 
-              margin: 0, 
-              marginBottom: '1rem', 
-              color: '#333',
-              fontSize: '1.3rem',
-            }}>
-              Goal {showComplete && '✓'}
-            </h2>
-            <VisualCanvas
-              elements={exercise.afterState.visualElements || []}
-              highlights={[]}
-              isAnimating={false}
-              showComplete={showComplete}
-            />
-            {exercise.afterState.code && (
-              <pre style={{
-                backgroundColor: '#f5f5f5',
-                padding: '1rem',
-                borderRadius: '8px',
-                overflow: 'auto',
-                fontSize: '0.9rem',
-                marginTop: '1rem',
-                color: '#333',
-              }}>
-                {exercise.afterState.code}
-              </pre>
-            )}
-          </motion.div>
-        </div>
-
-        {/* Steps Panel */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          style={{
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '2rem',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-          }}
-        >
-          {!showComplete ? (
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStepIndex}
@@ -271,71 +253,298 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
+                style={{ padding: '1.5rem' }}
               >
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '1rem',
-                }}>
-                  <h3 style={{ margin: 0, color: '#333', fontSize: '1.5rem' }}>
-                    Step {currentStepIndex + 1} of {totalSteps}
-                  </h3>
-                  <div style={{
-                    backgroundColor: '#667eea',
-                    color: 'white',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '20px',
-                    fontSize: '0.9rem',
-                  }}>
-                    {Math.round(((currentStepIndex + 1) / totalSteps) * 100)}% Complete
-                  </div>
-                </div>
-
-                <h4 style={{ 
-                  margin: '1rem 0 0.5rem', 
+                {/* Step Title & Description */}
+                <h3 style={{ 
+                  margin: '0 0 0.5rem 0', 
                   color: '#667eea',
-                  fontSize: '1.3rem',
+                  fontSize: '1.4rem',
                 }}>
                   {currentStep.title}
-                </h4>
-                <p style={{ color: '#666', fontSize: '1.1rem', lineHeight: '1.6' }}>
+                </h3>
+                <p style={{ 
+                  color: '#666', 
+                  fontSize: '1.05rem', 
+                  lineHeight: '1.6',
+                  margin: '0 0 1.5rem 0',
+                }}>
                   {currentStep.description}
                 </p>
+
+                {/* Workspace - Single Canvas showing current state with highlights */}
+                <div style={{
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  marginBottom: '1rem',
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    marginBottom: '0.75rem',
+                  }}>
+                    <span style={{ 
+                      fontSize: '0.85rem', 
+                      color: '#666',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}>
+                      📍 Your Workspace
+                    </span>
+                  </div>
+                  <VisualCanvas
+                    elements={currentVisualElements}
+                    highlights={currentStep?.highlights || []}
+                    isAnimating={isAnimating}
+                  />
+                  {currentCode && (
+                    <pre style={{
+                      backgroundColor: '#1e1e1e',
+                      color: '#d4d4d4',
+                      padding: '1rem',
+                      borderRadius: '8px',
+                      overflow: 'auto',
+                      fontSize: '0.85rem',
+                      marginTop: '0.75rem',
+                      fontFamily: '"Fira Code", "Consolas", monospace',
+                    }}>
+                      {currentCode}
+                    </pre>
+                  )}
+                </div>
+
+                {/* What you'll create - Preview of next step result */}
+                <div style={{
+                  backgroundColor: '#e8f5e9',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  border: '1px solid #c8e6c9',
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    marginBottom: '0.75rem',
+                  }}>
+                    <span style={{ 
+                      fontSize: '0.85rem', 
+                      color: '#2e7d32',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}>
+                      ✨ After this step
+                    </span>
+                  </div>
+                  <VisualCanvas
+                    elements={nextPreview.elements}
+                    highlights={[]}
+                    isAnimating={false}
+                  />
+                  {nextPreview.code && (
+                    <pre style={{
+                      backgroundColor: '#1e1e1e',
+                      color: '#d4d4d4',
+                      padding: '1rem',
+                      borderRadius: '8px',
+                      overflow: 'auto',
+                      fontSize: '0.85rem',
+                      marginTop: '0.75rem',
+                      fontFamily: '"Fira Code", "Consolas", monospace',
+                    }}>
+                      {nextPreview.code}
+                    </pre>
+                  )}
+                </div>
               </motion.div>
             </AnimatePresence>
-          ) : (
+          </motion.div>
+        ) : (
+          /* Completion State */
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '3rem 2rem',
+              marginBottom: '1.5rem',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+              textAlign: 'center',
+            }}
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              style={{ textAlign: 'center' }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+              style={{ fontSize: '4rem', marginBottom: '1rem' }}
             >
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎉</div>
-              <h3 style={{ color: '#4CAF50', fontSize: '1.8rem', marginBottom: '0.5rem' }}>
-                Exercise Complete!
-              </h3>
-              <p style={{ color: '#666', fontSize: '1.1rem' }}>
-                Great job! You've completed all the steps.
-              </p>
+              🎉
             </motion.div>
-          )}
+            <h2 style={{ color: '#4CAF50', fontSize: '2rem', marginBottom: '0.5rem' }}>
+              Exercise Complete!
+            </h2>
+            <p style={{ color: '#666', fontSize: '1.1rem', marginBottom: '2rem' }}>
+              Great job! You've successfully completed all {totalSteps} steps.
+            </p>
+            
+            {/* Final Result */}
+            <div style={{
+              backgroundColor: '#f8f9fa',
+              borderRadius: '8px',
+              padding: '1.5rem',
+              textAlign: 'left',
+            }}>
+              <h3 style={{ 
+                margin: '0 0 1rem 0', 
+                color: '#333',
+                fontSize: '1.1rem',
+              }}>
+                🏆 Final Result
+              </h3>
+              <VisualCanvas
+                elements={exercise.afterState.visualElements || []}
+                highlights={[]}
+                isAnimating={false}
+                showComplete={true}
+              />
+              {exercise.afterState.code && (
+                <pre style={{
+                  backgroundColor: '#1e1e1e',
+                  color: '#d4d4d4',
+                  padding: '1rem',
+                  borderRadius: '8px',
+                  overflow: 'auto',
+                  fontSize: '0.85rem',
+                  marginTop: '0.75rem',
+                  fontFamily: '"Fira Code", "Consolas", monospace',
+                }}>
+                  {exercise.afterState.code}
+                </pre>
+              )}
+            </div>
+          </motion.div>
+        )}
 
+        {/* Peek Goal Toggle - Optional preview */}
+        {!showComplete && (
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              marginBottom: '1.5rem',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+              overflow: 'hidden',
+            }}
+          >
+            <motion.button
+              whileHover={{ backgroundColor: '#f8f9fa' }}
+              onClick={() => setShowGoalPreview(!showGoalPreview)}
+              style={{
+                width: '100%',
+                padding: '1rem 1.5rem',
+                backgroundColor: 'white',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontSize: '1rem',
+                color: '#666',
+              }}
+            >
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                🎯 {showGoalPreview ? 'Hide' : 'Peek at'} Final Goal
+              </span>
+              <motion.span
+                animate={{ rotate: showGoalPreview ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                ▼
+              </motion.span>
+            </motion.button>
+            
+            <AnimatePresence>
+              {showGoalPreview && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ overflow: 'hidden' }}
+                >
+                  <div style={{ 
+                    padding: '0 1.5rem 1.5rem',
+                    borderTop: '1px solid #eee',
+                  }}>
+                    <p style={{ 
+                      color: '#888', 
+                      fontSize: '0.9rem', 
+                      margin: '1rem 0',
+                      fontStyle: 'italic',
+                    }}>
+                      This is what you'll build by the end of this exercise:
+                    </p>
+                    <VisualCanvas
+                      elements={exercise.afterState.visualElements || []}
+                      highlights={[]}
+                      isAnimating={false}
+                    />
+                    {exercise.afterState.code && (
+                      <pre style={{
+                        backgroundColor: '#1e1e1e',
+                        color: '#d4d4d4',
+                        padding: '1rem',
+                        borderRadius: '8px',
+                        overflow: 'auto',
+                        fontSize: '0.85rem',
+                        marginTop: '0.75rem',
+                        fontFamily: '"Fira Code", "Consolas", monospace',
+                      }}>
+                        {exercise.afterState.code}
+                      </pre>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
+
+        {/* Navigation Controls */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '1.5rem',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+          }}
+        >
           {/* Progress Bar */}
           <div style={{
             width: '100%',
-            height: '8px',
+            height: '6px',
             backgroundColor: '#e0e0e0',
-            borderRadius: '4px',
+            borderRadius: '3px',
             overflow: 'hidden',
-            margin: '1.5rem 0',
+            marginBottom: '1.5rem',
           }}>
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${((currentStepIndex + 1) / totalSteps) * 100}%` }}
+              animate={{ width: `${(currentStepIndex / totalSteps) * 100}%` }}
               transition={{ duration: 0.5 }}
               style={{
                 height: '100%',
-                backgroundColor: '#667eea',
+                backgroundColor: currentStepIndex >= totalSteps ? '#4CAF50' : '#667eea',
               }}
             />
           </div>
@@ -347,17 +556,17 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
             justifyContent: 'center',
           }}>
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: currentStepIndex === 0 ? 1 : 1.05 }}
+              whileTap={{ scale: currentStepIndex === 0 ? 1 : 0.95 }}
               onClick={handlePrevStep}
               disabled={currentStepIndex === 0}
               style={{
-                backgroundColor: currentStepIndex === 0 ? '#e0e0e0' : '#667eea',
-                color: 'white',
-                border: 'none',
-                padding: '1rem 2rem',
+                backgroundColor: currentStepIndex === 0 ? '#e0e0e0' : 'transparent',
+                color: currentStepIndex === 0 ? '#999' : '#667eea',
+                border: currentStepIndex === 0 ? 'none' : '2px solid #667eea',
+                padding: '0.875rem 2rem',
                 borderRadius: '8px',
-                fontSize: '1.1rem',
+                fontSize: '1rem',
                 cursor: currentStepIndex === 0 ? 'not-allowed' : 'pointer',
                 fontWeight: '600',
               }}
@@ -366,22 +575,25 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
             </motion.button>
 
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: currentStepIndex >= totalSteps ? 1 : 1.05 }}
+              whileTap={{ scale: currentStepIndex >= totalSteps ? 1 : 0.95 }}
               onClick={handleNextStep}
               disabled={currentStepIndex >= totalSteps}
               style={{
                 backgroundColor: currentStepIndex >= totalSteps ? '#e0e0e0' : '#667eea',
                 color: 'white',
                 border: 'none',
-                padding: '1rem 2rem',
+                padding: '0.875rem 2rem',
                 borderRadius: '8px',
-                fontSize: '1.1rem',
+                fontSize: '1rem',
                 cursor: currentStepIndex >= totalSteps ? 'not-allowed' : 'pointer',
                 fontWeight: '600',
+                minWidth: '160px',
               }}
             >
-              Next →
+              {currentStepIndex >= totalSteps - 1 
+                ? 'Complete ✓' 
+                : `Next Step →`}
             </motion.button>
           </div>
         </motion.div>
