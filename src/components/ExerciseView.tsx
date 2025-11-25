@@ -146,7 +146,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
       setValidationState('idle');
       setShowWhy(false);
       
-      // Get the code for the next step
+      // Get the code for the next step - use current step's expected result
       const nextStepCode = currentStep?.code || editorCode;
       
       setTimeout(() => {
@@ -158,22 +158,27 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
     }
   };
 
+  // Helper to get code state for a given step index
+  const getCodeForStep = (stepIndex: number): string => {
+    let code = exercise.beforeState.code || '';
+    // Apply code from each completed step up to stepIndex
+    for (let i = 0; i < stepIndex; i++) {
+      const step = exercise.steps[i];
+      if (step.code) {
+        code = step.code;
+      }
+    }
+    return code;
+  };
+
   const handlePrevStep = () => {
     if (currentStepIndex > 0) {
       setIsAnimating(true);
       setValidationState('idle');
       setShowWhy(false);
       
-      // Calculate the code for the previous step
       const prevIndex = currentStepIndex - 1;
-      let prevCode = exercise.beforeState.code || '';
-      for (let i = prevIndex - 1; i >= 0; i--) {
-        const step = exercise.steps[i];
-        if (step.code) {
-          prevCode = step.code;
-          break;
-        }
-      }
+      const prevCode = getCodeForStep(prevIndex);
       
       setTimeout(() => {
         setCurrentStepIndex((prev) => prev - 1);
@@ -487,6 +492,8 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                         setValidationState('idle');
                       }}
                       spellCheck={false}
+                      aria-label="Code editor - edit the code to complete the task"
+                      aria-multiline="true"
                       style={{
                         width: '100%',
                         minHeight: '200px',
