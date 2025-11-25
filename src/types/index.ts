@@ -13,6 +13,17 @@ export interface Step {
   description: string;
   highlights: Highlight[];
   duration?: number; // Duration in milliseconds for the animation
+  visualElements?: Array<{
+    id: string;
+    type: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    content: string;
+    style?: Record<string, string>;
+  }>; // Visual elements to show after this step is completed
+  code?: string; // Code to show after this step is completed
 }
 
 export interface ExerciseState {
