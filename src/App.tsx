@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
 import ClassroomListView from './components/ClassroomListView';
 import ClassroomView from './components/ClassroomView';
 import ExerciseView from './components/ExerciseView';
+import DarkModeToggle from './components/DarkModeToggle';
 import { sampleClassrooms } from './data/sampleData';
 
 function ClassroomRoute() {
@@ -35,6 +36,7 @@ function ExerciseRoute() {
 function App() {
   return (
     <BrowserRouter>
+      <DarkModeToggle />
       <Routes>
         <Route path="/" element={<ClassroomListView classrooms={sampleClassrooms} />} />
         <Route path="/classroom/:classroomId" element={<ClassroomRoute />} />

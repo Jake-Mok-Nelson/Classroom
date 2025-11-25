@@ -12,20 +12,20 @@ export default function ClassroomView({ classroom }: ClassroomViewProps) {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'beginner':
-        return '#4CAF50';
+        return 'var(--color-success-fg)';
       case 'intermediate':
-        return '#FF9800';
+        return 'var(--color-warning-fg)';
       case 'advanced':
-        return '#f44336';
+        return 'var(--color-danger-fg)';
       default:
-        return '#9e9e9e';
+        return 'var(--color-fg-muted)';
     }
   };
 
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      background: `linear-gradient(135deg, var(--color-accent-emphasis) 0%, #764ba2 100%)`,
       padding: '2rem',
     }}>
       <motion.div
@@ -90,13 +90,14 @@ export default function ClassroomView({ classroom }: ClassroomViewProps) {
               whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
               onClick={() => navigate(`/classroom/${classroom.id}/exercise/${exercise.id}`)}
               style={{
-                backgroundColor: 'white',
+                backgroundColor: 'var(--color-canvas-default)',
                 borderRadius: '12px',
                 padding: '1.5rem',
                 boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
                 cursor: 'pointer',
                 position: 'relative',
                 overflow: 'hidden',
+                border: '1px solid var(--color-border-default)',
               }}
             >
               <div style={{
@@ -110,13 +111,14 @@ export default function ClassroomView({ classroom }: ClassroomViewProps) {
               
               <div style={{
                 display: 'inline-block',
-                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                color: '#667eea',
+                backgroundColor: 'var(--color-canvas-subtle)',
+                color: 'var(--color-accent-emphasis)',
                 padding: '0.5rem 1rem',
                 borderRadius: '20px',
                 fontSize: '0.85rem',
                 marginBottom: '1rem',
                 fontWeight: '600',
+                border: '1px solid var(--color-border-muted)',
               }}>
                 {exercise.category}
               </div>
@@ -124,13 +126,13 @@ export default function ClassroomView({ classroom }: ClassroomViewProps) {
               <h3 style={{
                 fontSize: '1.5rem',
                 marginBottom: '0.5rem',
-                color: '#333',
+                color: 'var(--color-fg-default)',
               }}>
                 {exercise.title}
               </h3>
 
               <p style={{
-                color: '#666',
+                color: 'var(--color-fg-muted)',
                 marginBottom: '1rem',
                 lineHeight: '1.6',
               }}>
@@ -155,7 +157,7 @@ export default function ClassroomView({ classroom }: ClassroomViewProps) {
                   }} />
                   <span style={{
                     fontSize: '0.9rem',
-                    color: '#666',
+                    color: 'var(--color-fg-muted)',
                     textTransform: 'capitalize',
                   }}>
                     {exercise.difficulty}
@@ -164,7 +166,7 @@ export default function ClassroomView({ classroom }: ClassroomViewProps) {
 
                 <span style={{
                   fontSize: '0.9rem',
-                  color: '#667eea',
+                  color: 'var(--color-accent-emphasis)',
                   fontWeight: '600',
                 }}>
                   {exercise.steps.length} Steps →
