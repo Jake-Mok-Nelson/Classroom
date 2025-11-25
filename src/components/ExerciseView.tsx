@@ -199,7 +199,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      backgroundColor: 'var(--color-bg-primary)',
       padding: '2rem',
     }}>
       <motion.div
@@ -222,14 +222,13 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate(`/classroom/${classroomId}`)}
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              color: 'white',
-              border: 'none',
+              backgroundColor: 'var(--color-bg-tertiary)',
+              color: 'var(--color-text-primary)',
+              border: '1px solid var(--color-border-default)',
               padding: '0.75rem 1.5rem',
               borderRadius: '8px',
               fontSize: '1rem',
               cursor: 'pointer',
-              backdropFilter: 'blur(10px)',
             }}
           >
             ← Back to Classroom
@@ -240,14 +239,13 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
             whileTap={{ scale: 0.95 }}
             onClick={handleReset}
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              color: 'white',
-              border: 'none',
+              backgroundColor: 'var(--color-bg-tertiary)',
+              color: 'var(--color-text-primary)',
+              border: '1px solid var(--color-border-default)',
               padding: '0.75rem 1.5rem',
               borderRadius: '8px',
               fontSize: '1rem',
               cursor: 'pointer',
-              backdropFilter: 'blur(10px)',
             }}
           >
             🔄 Reset
@@ -259,19 +257,19 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           style={{
-            backgroundColor: 'white',
+            backgroundColor: 'var(--color-bg-secondary)',
             borderRadius: '12px',
             padding: '1.5rem 2rem',
             marginBottom: '1.5rem',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+            border: '1px solid var(--color-border-default)',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <h1 style={{ margin: 0, marginBottom: '0.5rem', color: '#333', fontSize: '1.8rem' }}>
+              <h1 style={{ margin: 0, marginBottom: '0.5rem', color: 'var(--color-text-primary)', fontSize: '1.8rem' }}>
                 {exercise.title}
               </h1>
-              <p style={{ margin: 0, color: '#666', fontSize: '1rem' }}>
+              <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '1rem' }}>
                 {exercise.description}
               </p>
             </div>
@@ -292,12 +290,12 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                     height: '10px',
                     borderRadius: '50%',
                     backgroundColor: index < currentStepIndex 
-                      ? '#4CAF50' 
+                      ? 'var(--color-success)' 
                       : index === currentStepIndex 
-                        ? '#667eea' 
-                        : '#e0e0e0',
-                    border: index === currentStepIndex ? '2px solid #667eea' : 'none',
-                    boxShadow: index === currentStepIndex ? '0 0 0 3px rgba(102, 126, 234, 0.3)' : 'none',
+                        ? 'var(--color-accent-primary)' 
+                        : 'var(--color-border-default)',
+                    border: index === currentStepIndex ? '2px solid var(--color-accent-primary)' : 'none',
+                    boxShadow: index === currentStepIndex ? '0 0 0 3px var(--color-accent-muted)' : 'none',
                   }}
                 />
               ))}
@@ -312,18 +310,18 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
             style={{
-              backgroundColor: 'white',
+              backgroundColor: 'var(--color-bg-secondary)',
               borderRadius: '12px',
               marginBottom: '1.5rem',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+              border: '1px solid var(--color-border-default)',
               overflow: 'hidden',
             }}
           >
             {/* Step Header */}
             <div style={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              backgroundColor: 'var(--color-accent-emphasis)',
               padding: '1rem 1.5rem',
-              color: 'white',
+              color: 'var(--color-text-on-emphasis)',
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.9rem', opacity: 0.9 }}>
@@ -352,13 +350,13 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                 {/* Step Title & Description */}
                 <h3 style={{ 
                   margin: '0 0 0.5rem 0', 
-                  color: '#667eea',
+                  color: 'var(--color-accent-primary)',
                   fontSize: '1.4rem',
                 }}>
                   {currentStep.title}
                 </h3>
                 <p style={{ 
-                  color: '#666', 
+                  color: 'var(--color-text-secondary)', 
                   fontSize: '1.05rem', 
                   lineHeight: '1.6',
                   margin: '0 0 1rem 0',
@@ -370,14 +368,14 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                 {currentStep.why && (
                   <div style={{ marginBottom: '1rem' }}>
                     <motion.button
-                      whileHover={{ backgroundColor: '#f0f4ff' }}
+                      whileHover={{ backgroundColor: 'var(--color-bg-tertiary)' }}
                       onClick={() => setShowWhy(!showWhy)}
                       style={{
-                        backgroundColor: showWhy ? '#e8f0fe' : 'transparent',
-                        border: '1px solid #667eea',
+                        backgroundColor: showWhy ? 'var(--color-accent-subtle)' : 'transparent',
+                        border: '1px solid var(--color-accent-primary)',
                         borderRadius: '6px',
                         padding: '0.5rem 1rem',
-                        color: '#667eea',
+                        color: 'var(--color-accent-primary)',
                         cursor: 'pointer',
                         fontSize: '0.9rem',
                         fontWeight: '500',
@@ -407,16 +405,16 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                           style={{ overflow: 'hidden' }}
                         >
                           <div style={{
-                            backgroundColor: '#f8f9ff',
-                            border: '1px solid #e0e6ff',
+                            backgroundColor: 'var(--color-accent-subtle)',
+                            border: '1px solid var(--color-accent-muted)',
                             borderRadius: '8px',
                             padding: '1rem',
                             marginTop: '0.75rem',
-                            color: '#4a5568',
+                            color: 'var(--color-text-secondary)',
                             fontSize: '0.95rem',
                             lineHeight: '1.6',
                           }}>
-                            <strong style={{ color: '#667eea' }}>Why:</strong> {currentStep.why}
+                            <strong style={{ color: 'var(--color-accent-primary)' }}>Why:</strong> {currentStep.why}
                           </div>
                         </motion.div>
                       )}
@@ -427,8 +425,8 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                 {/* Code Editor Section - Full editable code */}
                 {isInteractiveStep ? (
                   <div style={{
-                    backgroundColor: validationState === 'correct' ? '#e8f5e9' : validationState === 'incorrect' ? '#ffebee' : '#f8f9fa',
-                    border: `2px solid ${validationState === 'correct' ? '#4CAF50' : validationState === 'incorrect' ? '#f44336' : '#e0e0e0'}`,
+                    backgroundColor: validationState === 'correct' ? 'var(--color-success-subtle)' : validationState === 'incorrect' ? 'var(--color-danger-subtle)' : 'var(--color-bg-tertiary)',
+                    border: `2px solid ${validationState === 'correct' ? 'var(--color-success)' : validationState === 'incorrect' ? 'var(--color-danger)' : 'var(--color-border-default)'}`,
                     borderRadius: '8px',
                     padding: '1rem',
                     marginBottom: '1rem',
@@ -445,7 +443,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                         </span>
                         <span style={{
                           fontWeight: '600',
-                          color: validationState === 'correct' ? '#2e7d32' : validationState === 'incorrect' ? '#c62828' : '#333',
+                          color: validationState === 'correct' ? 'var(--color-success)' : validationState === 'incorrect' ? 'var(--color-danger)' : 'var(--color-text-primary)',
                           fontSize: '0.9rem',
                           textTransform: 'uppercase',
                           letterSpacing: '0.5px',
@@ -458,8 +456,8 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                         whileTap={{ scale: 0.98 }}
                         onClick={handleSubmitStep}
                         style={{
-                          backgroundColor: '#667eea',
-                          color: 'white',
+                          backgroundColor: 'var(--color-accent-emphasis)',
+                          color: 'var(--color-text-on-emphasis)',
                           border: 'none',
                           borderRadius: '6px',
                           padding: '0.5rem 1rem',
@@ -474,14 +472,14 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                     
                     {/* Task description */}
                     <div style={{
-                      backgroundColor: '#fff8e1',
-                      border: '1px solid #ffe082',
+                      backgroundColor: 'var(--color-attention-subtle)',
+                      border: '1px solid var(--color-attention-muted)',
                       borderRadius: '6px',
                       padding: '0.75rem 1rem',
                       marginBottom: '0.75rem',
                     }}>
-                      <span style={{ fontWeight: '600', color: '#f57c00', marginRight: '0.5rem' }}>📝 Task:</span>
-                      <span style={{ color: '#555' }}>{currentStep.task}</span>
+                      <span style={{ fontWeight: '600', color: 'var(--color-attention)', marginRight: '0.5rem' }}>📝 Task:</span>
+                      <span style={{ color: 'var(--color-text-secondary)' }}>{currentStep.task}</span>
                     </div>
                     
                     {/* Full Code Editor */}
@@ -500,9 +498,9 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                         padding: '1rem',
                         fontSize: '0.9rem',
                         fontFamily: '"Fira Code", "Consolas", "Monaco", monospace',
-                        backgroundColor: '#1e1e1e',
-                        color: '#d4d4d4',
-                        border: 'none',
+                        backgroundColor: 'var(--color-code-bg)',
+                        color: 'var(--color-text-primary)',
+                        border: '1px solid var(--color-border-default)',
                         borderRadius: '8px',
                         resize: 'vertical',
                         outline: 'none',
@@ -516,23 +514,23 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         style={{
-                          color: '#c62828',
+                          color: 'var(--color-danger)',
                           fontSize: '0.85rem',
                           marginTop: '0.75rem',
                           marginBottom: 0,
-                          backgroundColor: '#ffebee',
+                          backgroundColor: 'var(--color-danger-subtle)',
                           padding: '0.5rem 0.75rem',
                           borderRadius: '4px',
                         }}
                       >
-                        💡 Hint: Your code should include: <code style={{ backgroundColor: '#fff', padding: '0.1rem 0.3rem', borderRadius: '3px' }}>{currentStep.expectedCode}</code>
+                        💡 Hint: Your code should include: <code style={{ backgroundColor: 'var(--color-bg-secondary)', padding: '0.1rem 0.3rem', borderRadius: '3px' }}>{currentStep.expectedCode}</code>
                       </motion.p>
                     )}
                   </div>
                 ) : (
                   /* Non-interactive: Show read-only code display */
                   <div style={{
-                    backgroundColor: '#f8f9fa',
+                    backgroundColor: 'var(--color-bg-tertiary)',
                     borderRadius: '8px',
                     padding: '1rem',
                     marginBottom: '1rem',
@@ -545,7 +543,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                     }}>
                       <span style={{ 
                         fontSize: '0.85rem', 
-                        color: '#666',
+                        color: 'var(--color-text-secondary)',
                         fontWeight: '600',
                         textTransform: 'uppercase',
                         letterSpacing: '0.5px',
@@ -560,14 +558,15 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                     />
                     {currentCode && (
                       <pre style={{
-                        backgroundColor: '#1e1e1e',
-                        color: '#d4d4d4',
+                        backgroundColor: 'var(--color-code-bg)',
+                        color: 'var(--color-text-primary)',
                         padding: '1rem',
                         borderRadius: '8px',
                         overflow: 'auto',
                         fontSize: '0.85rem',
                         marginTop: '0.75rem',
                         fontFamily: '"Fira Code", "Consolas", monospace',
+                        border: '1px solid var(--color-border-default)',
                       }}>
                         {currentCode}
                       </pre>
@@ -578,7 +577,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                 {/* Visual Preview for interactive steps */}
                 {isInteractiveStep && (
                   <div style={{
-                    backgroundColor: '#f8f9fa',
+                    backgroundColor: 'var(--color-bg-tertiary)',
                     borderRadius: '8px',
                     padding: '1rem',
                     marginBottom: '1rem',
@@ -591,7 +590,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                     }}>
                       <span style={{ 
                         fontSize: '0.85rem', 
-                        color: '#666',
+                        color: 'var(--color-text-secondary)',
                         fontWeight: '600',
                         textTransform: 'uppercase',
                         letterSpacing: '0.5px',
@@ -609,10 +608,10 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
 
                 {/* What you'll create - Preview of next step result */}
                 <div style={{
-                  backgroundColor: '#e8f5e9',
+                  backgroundColor: 'var(--color-success-subtle)',
                   borderRadius: '8px',
                   padding: '1rem',
-                  border: '1px solid #c8e6c9',
+                  border: '1px solid var(--color-success-muted)',
                 }}>
                   <div style={{ 
                     display: 'flex', 
@@ -622,7 +621,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                   }}>
                     <span style={{ 
                       fontSize: '0.85rem', 
-                      color: '#2e7d32',
+                      color: 'var(--color-success)',
                       fontWeight: '600',
                       textTransform: 'uppercase',
                       letterSpacing: '0.5px',
@@ -637,14 +636,15 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                   />
                   {nextPreview.code && (
                     <pre style={{
-                      backgroundColor: '#1e1e1e',
-                      color: '#d4d4d4',
+                      backgroundColor: 'var(--color-code-bg)',
+                      color: 'var(--color-text-primary)',
                       padding: '1rem',
                       borderRadius: '8px',
                       overflow: 'auto',
                       fontSize: '0.85rem',
                       marginTop: '0.75rem',
                       fontFamily: '"Fira Code", "Consolas", monospace',
+                      border: '1px solid var(--color-border-default)',
                     }}>
                       {nextPreview.code}
                     </pre>
@@ -659,11 +659,11 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             style={{
-              backgroundColor: 'white',
+              backgroundColor: 'var(--color-bg-secondary)',
               borderRadius: '12px',
               padding: '3rem 2rem',
               marginBottom: '1.5rem',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+              border: '1px solid var(--color-border-default)',
               textAlign: 'center',
             }}
           >
@@ -675,23 +675,23 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
             >
               🎉
             </motion.div>
-            <h2 style={{ color: '#4CAF50', fontSize: '2rem', marginBottom: '0.5rem' }}>
+            <h2 style={{ color: 'var(--color-success)', fontSize: '2rem', marginBottom: '0.5rem' }}>
               Exercise Complete!
             </h2>
-            <p style={{ color: '#666', fontSize: '1.1rem', marginBottom: '2rem' }}>
+            <p style={{ color: 'var(--color-text-secondary)', fontSize: '1.1rem', marginBottom: '2rem' }}>
               Great job! You've successfully completed all {totalSteps} steps.
             </p>
             
             {/* Final Result */}
             <div style={{
-              backgroundColor: '#f8f9fa',
+              backgroundColor: 'var(--color-bg-tertiary)',
               borderRadius: '8px',
               padding: '1.5rem',
               textAlign: 'left',
             }}>
               <h3 style={{ 
                 margin: '0 0 1rem 0', 
-                color: '#333',
+                color: 'var(--color-text-primary)',
                 fontSize: '1.1rem',
               }}>
                 🏆 Final Result
@@ -704,14 +704,15 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
               />
               {exercise.afterState.code && (
                 <pre style={{
-                  backgroundColor: '#1e1e1e',
-                  color: '#d4d4d4',
+                  backgroundColor: 'var(--color-code-bg)',
+                  color: 'var(--color-text-primary)',
                   padding: '1rem',
                   borderRadius: '8px',
                   overflow: 'auto',
                   fontSize: '0.85rem',
                   marginTop: '0.75rem',
                   fontFamily: '"Fira Code", "Consolas", monospace',
+                  border: '1px solid var(--color-border-default)',
                 }}>
                   {exercise.afterState.code}
                 </pre>
@@ -727,27 +728,27 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
             style={{
-              backgroundColor: 'white',
+              backgroundColor: 'var(--color-bg-secondary)',
               borderRadius: '12px',
               marginBottom: '1.5rem',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+              border: '1px solid var(--color-border-default)',
               overflow: 'hidden',
             }}
           >
             <motion.button
-              whileHover={{ backgroundColor: '#f8f9fa' }}
+              whileHover={{ backgroundColor: 'var(--color-bg-tertiary)' }}
               onClick={() => setShowGoalPreview(!showGoalPreview)}
               style={{
                 width: '100%',
                 padding: '1rem 1.5rem',
-                backgroundColor: 'white',
+                backgroundColor: 'var(--color-bg-secondary)',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 fontSize: '1rem',
-                color: '#666',
+                color: 'var(--color-text-secondary)',
               }}
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -772,10 +773,10 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                 >
                   <div style={{ 
                     padding: '0 1.5rem 1.5rem',
-                    borderTop: '1px solid #eee',
+                    borderTop: '1px solid var(--color-border-default)',
                   }}>
                     <p style={{ 
-                      color: '#888', 
+                      color: 'var(--color-text-muted)', 
                       fontSize: '0.9rem', 
                       margin: '1rem 0',
                       fontStyle: 'italic',
@@ -789,14 +790,15 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                     />
                     {exercise.afterState.code && (
                       <pre style={{
-                        backgroundColor: '#1e1e1e',
-                        color: '#d4d4d4',
+                        backgroundColor: 'var(--color-code-bg)',
+                        color: 'var(--color-text-primary)',
                         padding: '1rem',
                         borderRadius: '8px',
                         overflow: 'auto',
                         fontSize: '0.85rem',
                         marginTop: '0.75rem',
                         fontFamily: '"Fira Code", "Consolas", monospace',
+                        border: '1px solid var(--color-border-default)',
                       }}>
                         {exercise.afterState.code}
                       </pre>
@@ -814,17 +816,17 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
           style={{
-            backgroundColor: 'white',
+            backgroundColor: 'var(--color-bg-secondary)',
             borderRadius: '12px',
             padding: '1.5rem',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+            border: '1px solid var(--color-border-default)',
           }}
         >
           {/* Progress Bar */}
           <div style={{
             width: '100%',
             height: '6px',
-            backgroundColor: '#e0e0e0',
+            backgroundColor: 'var(--color-border-default)',
             borderRadius: '3px',
             overflow: 'hidden',
             marginBottom: '1.5rem',
@@ -835,7 +837,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
               transition={{ duration: 0.5 }}
               style={{
                 height: '100%',
-                backgroundColor: currentStepIndex >= totalSteps ? '#4CAF50' : '#667eea',
+                backgroundColor: currentStepIndex >= totalSteps ? 'var(--color-success)' : 'var(--color-accent-primary)',
               }}
             />
           </div>
@@ -852,9 +854,9 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
               onClick={handlePrevStep}
               disabled={currentStepIndex === 0}
               style={{
-                backgroundColor: currentStepIndex === 0 ? '#e0e0e0' : 'transparent',
-                color: currentStepIndex === 0 ? '#999' : '#667eea',
-                border: currentStepIndex === 0 ? 'none' : '2px solid #667eea',
+                backgroundColor: currentStepIndex === 0 ? 'var(--color-bg-tertiary)' : 'transparent',
+                color: currentStepIndex === 0 ? 'var(--color-text-muted)' : 'var(--color-accent-primary)',
+                border: currentStepIndex === 0 ? 'none' : '2px solid var(--color-accent-primary)',
                 padding: '0.875rem 2rem',
                 borderRadius: '8px',
                 fontSize: '1rem',
@@ -873,8 +875,8 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                 onClick={handleNextStep}
                 disabled={validationState !== 'correct'}
                 style={{
-                  backgroundColor: validationState === 'correct' ? '#4CAF50' : '#e0e0e0',
-                  color: validationState === 'correct' ? 'white' : '#999',
+                  backgroundColor: validationState === 'correct' ? 'var(--color-success)' : 'var(--color-bg-tertiary)',
+                  color: validationState === 'correct' ? 'var(--color-text-on-emphasis)' : 'var(--color-text-muted)',
                   border: 'none',
                   padding: '0.875rem 2rem',
                   borderRadius: '8px',
@@ -895,8 +897,8 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                 onClick={handleNextStep}
                 disabled={currentStepIndex >= totalSteps}
                 style={{
-                  backgroundColor: currentStepIndex >= totalSteps ? '#e0e0e0' : '#667eea',
-                  color: 'white',
+                  backgroundColor: currentStepIndex >= totalSteps ? 'var(--color-bg-tertiary)' : 'var(--color-accent-emphasis)',
+                  color: currentStepIndex >= totalSteps ? 'var(--color-text-muted)' : 'var(--color-text-on-emphasis)',
                   border: 'none',
                   padding: '0.875rem 2rem',
                   borderRadius: '8px',
