@@ -15,7 +15,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   const [isAnimating, setIsAnimating] = useState(false);
   const [showGoalPreview, setShowGoalPreview] = useState(false);
   const [showWhy, setShowWhy] = useState(false);
-  const [userInput, setUserInput] = useState('');
+  const [editorCode, setEditorCode] = useState(exercise.beforeState.code || '');
   const [validationState, setValidationState] = useState<'idle' | 'correct' | 'incorrect'>('idle');
 
   const currentStep = exercise.steps[currentStepIndex];
@@ -116,18 +116,18 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   // Delay before auto-advancing after correct answer (in milliseconds)
   const CORRECT_ANSWER_DELAY = 800;
 
-  // Validate user input against expected code
-  const validateInput = () => {
+  // Validate user's edited code against expected code
+  const validateCode = () => {
     if (!currentStep?.expectedCode) return true;
-    const normalizedInput = userInput.trim().toLowerCase();
+    const normalizedCode = editorCode.trim().toLowerCase();
     const normalizedExpected = currentStep.expectedCode.trim().toLowerCase();
-    // Check if user input contains the expected code (case-insensitive)
-    return normalizedInput.includes(normalizedExpected);
+    // Check if the edited code contains the expected code (case-insensitive)
+    return normalizedCode.includes(normalizedExpected);
   };
 
   const handleSubmitStep = () => {
     if (isInteractiveStep) {
-      const isCorrect = validateInput();
+      const isCorrect = validateCode();
       setValidationState(isCorrect ? 'correct' : 'incorrect');
       
       if (isCorrect) {
@@ -143,11 +143,16 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   const handleNextStep = () => {
     if (currentStepIndex < totalSteps) {
       setIsAnimating(true);
-      setUserInput('');
       setValidationState('idle');
       setShowWhy(false);
+      
+      // Get the code for the next step
+      const nextStepCode = currentStep?.code || editorCode;
+      
       setTimeout(() => {
         setCurrentStepIndex((prev) => prev + 1);
+        // Update editor with the current step's resulting code
+        setEditorCode(nextStepCode);
         setIsAnimating(false);
       }, 500);
     }
@@ -156,11 +161,23 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   const handlePrevStep = () => {
     if (currentStepIndex > 0) {
       setIsAnimating(true);
-      setUserInput('');
       setValidationState('idle');
       setShowWhy(false);
+      
+      // Calculate the code for the previous step
+      const prevIndex = currentStepIndex - 1;
+      let prevCode = exercise.beforeState.code || '';
+      for (let i = prevIndex - 1; i >= 0; i--) {
+        const step = exercise.steps[i];
+        if (step.code) {
+          prevCode = step.code;
+          break;
+        }
+      }
+      
       setTimeout(() => {
         setCurrentStepIndex((prev) => prev - 1);
+        setEditorCode(prevCode);
         setIsAnimating(false);
       }, 500);
     }
@@ -169,7 +186,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   const handleReset = () => {
     setCurrentStepIndex(0);
     setShowGoalPreview(false);
-    setUserInput('');
+    setEditorCode(exercise.beforeState.code || '');
     setValidationState('idle');
     setShowWhy(false);
   };
@@ -402,11 +419,11 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                   </div>
                 )}
 
-                {/* Interactive Task Input */}
-                {isInteractiveStep && (
+                {/* Code Editor Section - Full editable code */}
+                {isInteractiveStep ? (
                   <div style={{
-                    backgroundColor: validationState === 'correct' ? '#e8f5e9' : validationState === 'incorrect' ? '#ffebee' : '#fff8e1',
-                    border: `2px solid ${validationState === 'correct' ? '#4CAF50' : validationState === 'incorrect' ? '#f44336' : '#ffc107'}`,
+                    backgroundColor: validationState === 'correct' ? '#e8f5e9' : validationState === 'incorrect' ? '#ffebee' : '#f8f9fa',
+                    border: `2px solid ${validationState === 'correct' ? '#4CAF50' : validationState === 'incorrect' ? '#f44336' : '#e0e0e0'}`,
                     borderRadius: '8px',
                     padding: '1rem',
                     marginBottom: '1rem',
@@ -414,72 +431,79 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                     <div style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.5rem',
+                      justifyContent: 'space-between',
                       marginBottom: '0.75rem',
                     }}>
-                      <span style={{ fontSize: '1.2rem' }}>
-                        {validationState === 'correct' ? '✅' : validationState === 'incorrect' ? '❌' : '✏️'}
-                      </span>
-                      <span style={{
-                        fontWeight: '600',
-                        color: validationState === 'correct' ? '#2e7d32' : validationState === 'incorrect' ? '#c62828' : '#f57c00',
-                        fontSize: '0.9rem',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                      }}>
-                        {validationState === 'correct' ? 'Correct!' : validationState === 'incorrect' ? 'Try Again' : 'Your Task'}
-                      </span>
-                    </div>
-                    <p style={{
-                      color: '#555',
-                      fontSize: '0.95rem',
-                      margin: '0 0 0.75rem 0',
-                    }}>
-                      {currentStep.task}
-                    </p>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <input
-                        type="text"
-                        value={userInput}
-                        onChange={(e) => {
-                          setUserInput(e.target.value);
-                          setValidationState('idle');
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleSubmitStep();
-                          }
-                        }}
-                        placeholder="Type your answer here..."
-                        style={{
-                          flex: 1,
-                          padding: '0.75rem 1rem',
-                          fontSize: '1rem',
-                          fontFamily: '"Fira Code", "Consolas", monospace',
-                          border: '1px solid #ddd',
-                          borderRadius: '6px',
-                          outline: 'none',
-                        }}
-                      />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '1.2rem' }}>
+                          {validationState === 'correct' ? '✅' : validationState === 'incorrect' ? '❌' : '💻'}
+                        </span>
+                        <span style={{
+                          fontWeight: '600',
+                          color: validationState === 'correct' ? '#2e7d32' : validationState === 'incorrect' ? '#c62828' : '#333',
+                          fontSize: '0.9rem',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px',
+                        }}>
+                          {validationState === 'correct' ? 'Correct!' : validationState === 'incorrect' ? 'Try Again' : 'Code Editor'}
+                        </span>
+                      </div>
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={handleSubmitStep}
-                        disabled={!userInput.trim()}
                         style={{
-                          backgroundColor: userInput.trim() ? '#667eea' : '#ccc',
+                          backgroundColor: '#667eea',
                           color: 'white',
                           border: 'none',
                           borderRadius: '6px',
-                          padding: '0.75rem 1.5rem',
-                          fontSize: '1rem',
+                          padding: '0.5rem 1rem',
+                          fontSize: '0.9rem',
                           fontWeight: '600',
-                          cursor: userInput.trim() ? 'pointer' : 'not-allowed',
+                          cursor: 'pointer',
                         }}
                       >
-                        Check
+                        ✓ Check Code
                       </motion.button>
                     </div>
+                    
+                    {/* Task description */}
+                    <div style={{
+                      backgroundColor: '#fff8e1',
+                      border: '1px solid #ffe082',
+                      borderRadius: '6px',
+                      padding: '0.75rem 1rem',
+                      marginBottom: '0.75rem',
+                    }}>
+                      <span style={{ fontWeight: '600', color: '#f57c00', marginRight: '0.5rem' }}>📝 Task:</span>
+                      <span style={{ color: '#555' }}>{currentStep.task}</span>
+                    </div>
+                    
+                    {/* Full Code Editor */}
+                    <textarea
+                      value={editorCode}
+                      onChange={(e) => {
+                        setEditorCode(e.target.value);
+                        setValidationState('idle');
+                      }}
+                      spellCheck={false}
+                      style={{
+                        width: '100%',
+                        minHeight: '200px',
+                        padding: '1rem',
+                        fontSize: '0.9rem',
+                        fontFamily: '"Fira Code", "Consolas", "Monaco", monospace',
+                        backgroundColor: '#1e1e1e',
+                        color: '#d4d4d4',
+                        border: 'none',
+                        borderRadius: '8px',
+                        resize: 'vertical',
+                        outline: 'none',
+                        lineHeight: '1.5',
+                        tabSize: 2,
+                      }}
+                    />
+                    
                     {validationState === 'incorrect' && (
                       <motion.p
                         initial={{ opacity: 0, y: -10 }}
@@ -487,59 +511,94 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                         style={{
                           color: '#c62828',
                           fontSize: '0.85rem',
-                          marginTop: '0.5rem',
+                          marginTop: '0.75rem',
                           marginBottom: 0,
+                          backgroundColor: '#ffebee',
+                          padding: '0.5rem 0.75rem',
+                          borderRadius: '4px',
                         }}
                       >
-                        Hint: Look for "{currentStep.expectedCode}"
+                        💡 Hint: Your code should include: <code style={{ backgroundColor: '#fff', padding: '0.1rem 0.3rem', borderRadius: '3px' }}>{currentStep.expectedCode}</code>
                       </motion.p>
+                    )}
+                  </div>
+                ) : (
+                  /* Non-interactive: Show read-only code display */
+                  <div style={{
+                    backgroundColor: '#f8f9fa',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    marginBottom: '1rem',
+                  }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      marginBottom: '0.75rem',
+                    }}>
+                      <span style={{ 
+                        fontSize: '0.85rem', 
+                        color: '#666',
+                        fontWeight: '600',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}>
+                        📍 Your Workspace
+                      </span>
+                    </div>
+                    <VisualCanvas
+                      elements={currentVisualElements}
+                      highlights={currentStep?.highlights || []}
+                      isAnimating={isAnimating}
+                    />
+                    {currentCode && (
+                      <pre style={{
+                        backgroundColor: '#1e1e1e',
+                        color: '#d4d4d4',
+                        padding: '1rem',
+                        borderRadius: '8px',
+                        overflow: 'auto',
+                        fontSize: '0.85rem',
+                        marginTop: '0.75rem',
+                        fontFamily: '"Fira Code", "Consolas", monospace',
+                      }}>
+                        {currentCode}
+                      </pre>
                     )}
                   </div>
                 )}
 
-                {/* Workspace - Single Canvas showing current state with highlights */}
-                <div style={{
-                  backgroundColor: '#f8f9fa',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  marginBottom: '1rem',
-                }}>
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center',
-                    marginBottom: '0.75rem',
+                {/* Visual Preview for interactive steps */}
+                {isInteractiveStep && (
+                  <div style={{
+                    backgroundColor: '#f8f9fa',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    marginBottom: '1rem',
                   }}>
-                    <span style={{ 
-                      fontSize: '0.85rem', 
-                      color: '#666',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      marginBottom: '0.75rem',
                     }}>
-                      📍 Your Workspace
-                    </span>
+                      <span style={{ 
+                        fontSize: '0.85rem', 
+                        color: '#666',
+                        fontWeight: '600',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}>
+                        👁️ Visual Preview
+                      </span>
+                    </div>
+                    <VisualCanvas
+                      elements={currentVisualElements}
+                      highlights={currentStep?.highlights || []}
+                      isAnimating={isAnimating}
+                    />
                   </div>
-                  <VisualCanvas
-                    elements={currentVisualElements}
-                    highlights={currentStep?.highlights || []}
-                    isAnimating={isAnimating}
-                  />
-                  {currentCode && (
-                    <pre style={{
-                      backgroundColor: '#1e1e1e',
-                      color: '#d4d4d4',
-                      padding: '1rem',
-                      borderRadius: '8px',
-                      overflow: 'auto',
-                      fontSize: '0.85rem',
-                      marginTop: '0.75rem',
-                      fontFamily: '"Fira Code", "Consolas", monospace',
-                    }}>
-                      {currentCode}
-                    </pre>
-                  )}
-                </div>
+                )}
 
                 {/* What you'll create - Preview of next step result */}
                 <div style={{
