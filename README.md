@@ -11,7 +11,7 @@ An interactive digital classroom application built with React, TypeScript, and V
 - 🎨 **Beautiful UI**: Modern gradient backgrounds and smooth animations using Framer Motion
 - 📚 **Interactive Exercises**: Step-by-step guided learning with visual feedback
 - 🎯 **Highlighting System**: Animated highlights that guide users through each step
-- 📊 **Before/After Visualization**: Side-by-side comparison of starting and completed states
+- 📊 **Progressive Learning**: Focused single-view workspace showing current state and step-by-step previews
 - 🔄 **Progress Tracking**: Visual progress indicators and step navigation
 - 🌟 **Multiple Difficulty Levels**: Exercises categorized by difficulty (beginner, intermediate, advanced)
 - 📱 **Responsive Design**: Works seamlessly across different screen sizes
