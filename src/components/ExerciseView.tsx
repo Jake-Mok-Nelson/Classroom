@@ -58,19 +58,49 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
     return code;
   };
 
-  // Get the next step's visual elements and code to show as preview
+  // Get the preview of what the workspace will look like after completing the current step
   const getNextStepPreview = () => {
     if (currentStepIndex >= totalSteps) {
       return { elements: exercise.afterState.visualElements || [], code: exercise.afterState.code };
     }
     
     const step = exercise.steps[currentStepIndex];
+    
+    // If the current step has visual elements, show them as the "after" state
     if (step.visualElements) {
       return { elements: step.visualElements, code: step.code };
     }
     
-    // If no visual elements in current step, return current state
-    return { elements: getCurrentVisualElements(), code: getCurrentCode() };
+    // If no visual elements defined for this step, compute cumulative state including this step
+    // by looking ahead to what the next step would show
+    const elementMap = new Map<string, typeof exercise.beforeState.visualElements extends (infer T)[] | undefined ? T : never>();
+    
+    // Start with the before state elements
+    (exercise.beforeState.visualElements || []).forEach(el => {
+      elementMap.set(el.id, el);
+    });
+    
+    // Add visual elements from each step up to and including current
+    for (let i = 0; i <= currentStepIndex; i++) {
+      const s = exercise.steps[i];
+      if (s.visualElements) {
+        s.visualElements.forEach(newElement => {
+          elementMap.set(newElement.id, newElement);
+        });
+      }
+    }
+    
+    // Get the code that would be shown after this step
+    let code = exercise.beforeState.code;
+    for (let i = currentStepIndex; i >= 0; i--) {
+      const s = exercise.steps[i];
+      if (s.code) {
+        code = s.code;
+        break;
+      }
+    }
+    
+    return { elements: Array.from(elementMap.values()), code };
   };
 
   const currentVisualElements = getCurrentVisualElements();
@@ -241,7 +271,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                   borderRadius: '12px',
                   fontSize: '0.85rem',
                 }}>
-                  {Math.round((currentStepIndex / totalSteps) * 100)}% Complete
+                  {Math.round(((currentStepIndex) / totalSteps) * 100)}% Complete
                 </span>
               </div>
             </div>
@@ -591,9 +621,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                 minWidth: '160px',
               }}
             >
-              {currentStepIndex >= totalSteps - 1 
-                ? 'Complete ✓' 
-                : `Next Step →`}
+              {currentStepIndex >= totalSteps - 1 ? 'Complete ✓' : 'Next Step →'}
             </motion.button>
           </div>
         </motion.div>
