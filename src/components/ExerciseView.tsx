@@ -328,7 +328,7 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                   Step {currentStepIndex + 1} of {totalSteps}
                 </span>
                 <span style={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  backgroundColor: 'var(--color-bg-tertiary)',
                   padding: '0.25rem 0.75rem',
                   borderRadius: '12px',
                   fontSize: '0.85rem',
