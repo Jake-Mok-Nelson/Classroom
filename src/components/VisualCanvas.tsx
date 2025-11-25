@@ -30,9 +30,9 @@ export default function VisualCanvas({
       position: 'relative',
       width: '100%',
       height: '400px',
-      backgroundColor: '#fafafa',
+      backgroundColor: 'var(--color-bg-tertiary)',
       borderRadius: '8px',
-      border: '2px solid #e0e0e0',
+      border: '1px solid var(--color-border-default)',
       overflow: 'hidden',
     }}>
       {/* Visual Elements */}
@@ -81,10 +81,10 @@ export default function VisualCanvas({
             top: `${highlight.y}px`,
             width: `${highlight.width}px`,
             height: `${highlight.height}px`,
-            border: '3px solid #667eea',
+            border: '3px solid var(--color-accent-primary)',
             borderRadius: '8px',
             pointerEvents: 'none',
-            boxShadow: '0 0 20px rgba(102, 126, 234, 0.5)',
+            boxShadow: '0 0 20px rgba(88, 166, 255, 0.5)',
           }}
         >
           {/* Tooltip */}
@@ -98,13 +98,13 @@ export default function VisualCanvas({
               left: '50%',
               transform: 'translateX(-50%)',
               marginBottom: '10px',
-              backgroundColor: '#667eea',
-              color: 'white',
+              backgroundColor: 'var(--color-accent-emphasis)',
+              color: 'var(--color-text-primary)',
               padding: '0.5rem 1rem',
               borderRadius: '6px',
               fontSize: '0.85rem',
               whiteSpace: 'nowrap',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
             }}
           >
             {highlight.description}
@@ -118,7 +118,7 @@ export default function VisualCanvas({
               height: 0,
               borderLeft: '6px solid transparent',
               borderRight: '6px solid transparent',
-              borderTop: '6px solid #667eea',
+              borderTop: '6px solid var(--color-accent-emphasis)',
             }} />
           </motion.div>
         </motion.div>
@@ -135,7 +135,7 @@ export default function VisualCanvas({
             right: 0,
             bottom: 0,
             left: 0,
-            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+            backgroundColor: 'rgba(63, 185, 80, 0.1)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -152,13 +152,13 @@ export default function VisualCanvas({
               delay: 0.2,
             }}
             style={{
-              backgroundColor: '#4CAF50',
-              color: 'white',
+              backgroundColor: 'var(--color-success)',
+              color: 'var(--color-text-primary)',
               padding: '1rem 2rem',
               borderRadius: '12px',
               fontSize: '1.5rem',
               fontWeight: '600',
-              boxShadow: '0 8px 24px rgba(76, 175, 80, 0.4)',
+              boxShadow: '0 8px 24px rgba(63, 185, 80, 0.4)',
             }}
           >
             ✓ Complete
@@ -177,7 +177,7 @@ export default function VisualCanvas({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#999',
+          color: 'var(--color-text-muted)',
           fontSize: '1.1rem',
         }}>
           Visual preview will appear here

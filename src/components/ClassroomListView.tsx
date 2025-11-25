@@ -12,7 +12,7 @@ export default function ClassroomListView({ classrooms }: ClassroomListViewProps
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      backgroundColor: 'var(--color-bg-primary)',
       padding: '2rem',
     }}>
       <motion.div
@@ -25,7 +25,7 @@ export default function ClassroomListView({ classrooms }: ClassroomListViewProps
         }}
       >
         <h1 style={{
-          color: 'white',
+          color: 'var(--color-text-primary)',
           fontSize: '3rem',
           marginBottom: '1rem',
           textAlign: 'center',
@@ -33,7 +33,7 @@ export default function ClassroomListView({ classrooms }: ClassroomListViewProps
           Digital Classrooms
         </h1>
         <p style={{
-          color: 'rgba(255, 255, 255, 0.9)',
+          color: 'var(--color-text-secondary)',
           fontSize: '1.2rem',
           marginBottom: '3rem',
           textAlign: 'center',
@@ -55,10 +55,10 @@ export default function ClassroomListView({ classrooms }: ClassroomListViewProps
               whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
               onClick={() => navigate(`/classroom/${classroom.id}`)}
               style={{
-                backgroundColor: 'white',
+                backgroundColor: 'var(--color-bg-secondary)',
                 borderRadius: '12px',
                 padding: '2rem',
-                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                border: '1px solid var(--color-border-default)',
                 cursor: 'pointer',
                 position: 'relative',
                 overflow: 'hidden',
@@ -70,19 +70,19 @@ export default function ClassroomListView({ classrooms }: ClassroomListViewProps
                 left: 0,
                 right: 0,
                 height: '4px',
-                background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                backgroundColor: 'var(--color-accent-primary)',
               }} />
 
               <h3 style={{
                 fontSize: '1.8rem',
                 marginBottom: '0.75rem',
-                color: '#333',
+                color: 'var(--color-text-primary)',
               }}>
                 {classroom.name}
               </h3>
 
               <p style={{
-                color: '#666',
+                color: 'var(--color-text-secondary)',
                 marginBottom: '1.5rem',
                 lineHeight: '1.6',
                 fontSize: '1rem',
@@ -95,18 +95,18 @@ export default function ClassroomListView({ classrooms }: ClassroomListViewProps
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 paddingTop: '1rem',
-                borderTop: '1px solid #eee',
+                borderTop: '1px solid var(--color-border-default)',
               }}>
                 <span style={{
                   fontSize: '0.95rem',
-                  color: '#666',
+                  color: 'var(--color-text-secondary)',
                 }}>
                   {classroom.exercises.length} {classroom.exercises.length === 1 ? 'Exercise' : 'Exercises'}
                 </span>
 
                 <span style={{
                   fontSize: '0.95rem',
-                  color: '#667eea',
+                  color: 'var(--color-accent-primary)',
                   fontWeight: '600',
                 }}>
                   Start Learning →
