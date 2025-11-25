@@ -14,10 +14,16 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showGoalPreview, setShowGoalPreview] = useState(false);
+  const [showWhy, setShowWhy] = useState(false);
+  const [userInput, setUserInput] = useState('');
+  const [validationState, setValidationState] = useState<'idle' | 'correct' | 'incorrect'>('idle');
 
   const currentStep = exercise.steps[currentStepIndex];
   const totalSteps = exercise.steps.length;
   const showComplete = currentStepIndex >= totalSteps;
+  
+  // Check if current step requires interactive input
+  const isInteractiveStep = currentStep?.task && currentStep?.expectedCode;
 
   // Compute cumulative visual elements and code based on completed steps
   const getCurrentVisualElements = () => {
@@ -107,9 +113,35 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   const currentCode = getCurrentCode();
   const nextPreview = getNextStepPreview();
 
+  // Validate user input against expected code
+  const validateInput = () => {
+    if (!currentStep?.expectedCode) return true;
+    const normalizedInput = userInput.trim().toLowerCase();
+    const normalizedExpected = currentStep.expectedCode.trim().toLowerCase();
+    return normalizedInput.includes(normalizedExpected) || normalizedExpected.includes(normalizedInput);
+  };
+
+  const handleSubmitStep = () => {
+    if (isInteractiveStep) {
+      const isCorrect = validateInput();
+      setValidationState(isCorrect ? 'correct' : 'incorrect');
+      
+      if (isCorrect) {
+        setTimeout(() => {
+          handleNextStep();
+        }, 800);
+      }
+    } else {
+      handleNextStep();
+    }
+  };
+
   const handleNextStep = () => {
     if (currentStepIndex < totalSteps) {
       setIsAnimating(true);
+      setUserInput('');
+      setValidationState('idle');
+      setShowWhy(false);
       setTimeout(() => {
         setCurrentStepIndex((prev) => prev + 1);
         setIsAnimating(false);
@@ -120,6 +152,9 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   const handlePrevStep = () => {
     if (currentStepIndex > 0) {
       setIsAnimating(true);
+      setUserInput('');
+      setValidationState('idle');
+      setShowWhy(false);
       setTimeout(() => {
         setCurrentStepIndex((prev) => prev - 1);
         setIsAnimating(false);
@@ -130,6 +165,9 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
   const handleReset = () => {
     setCurrentStepIndex(0);
     setShowGoalPreview(false);
+    setUserInput('');
+    setValidationState('idle');
+    setShowWhy(false);
   };
 
   return (
@@ -297,10 +335,163 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
                   color: '#666', 
                   fontSize: '1.05rem', 
                   lineHeight: '1.6',
-                  margin: '0 0 1.5rem 0',
+                  margin: '0 0 1rem 0',
                 }}>
                   {currentStep.description}
                 </p>
+
+                {/* Why Toggle - Explanation section */}
+                {currentStep.why && (
+                  <div style={{ marginBottom: '1rem' }}>
+                    <motion.button
+                      whileHover={{ backgroundColor: '#f0f4ff' }}
+                      onClick={() => setShowWhy(!showWhy)}
+                      style={{
+                        backgroundColor: showWhy ? '#e8f0fe' : 'transparent',
+                        border: '1px solid #667eea',
+                        borderRadius: '6px',
+                        padding: '0.5rem 1rem',
+                        color: '#667eea',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        fontWeight: '500',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <span>💡</span>
+                      {showWhy ? 'Hide' : 'Show'} why this matters
+                      <motion.span
+                        animate={{ rotate: showWhy ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                        style={{ fontSize: '0.8rem' }}
+                      >
+                        ▼
+                      </motion.span>
+                    </motion.button>
+                    
+                    <AnimatePresence>
+                      {showWhy && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          style={{ overflow: 'hidden' }}
+                        >
+                          <div style={{
+                            backgroundColor: '#f8f9ff',
+                            border: '1px solid #e0e6ff',
+                            borderRadius: '8px',
+                            padding: '1rem',
+                            marginTop: '0.75rem',
+                            color: '#4a5568',
+                            fontSize: '0.95rem',
+                            lineHeight: '1.6',
+                          }}>
+                            <strong style={{ color: '#667eea' }}>Why:</strong> {currentStep.why}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
+
+                {/* Interactive Task Input */}
+                {isInteractiveStep && (
+                  <div style={{
+                    backgroundColor: validationState === 'correct' ? '#e8f5e9' : validationState === 'incorrect' ? '#ffebee' : '#fff8e1',
+                    border: `2px solid ${validationState === 'correct' ? '#4CAF50' : validationState === 'incorrect' ? '#f44336' : '#ffc107'}`,
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    marginBottom: '1rem',
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      marginBottom: '0.75rem',
+                    }}>
+                      <span style={{ fontSize: '1.2rem' }}>
+                        {validationState === 'correct' ? '✅' : validationState === 'incorrect' ? '❌' : '✏️'}
+                      </span>
+                      <span style={{
+                        fontWeight: '600',
+                        color: validationState === 'correct' ? '#2e7d32' : validationState === 'incorrect' ? '#c62828' : '#f57c00',
+                        fontSize: '0.9rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}>
+                        {validationState === 'correct' ? 'Correct!' : validationState === 'incorrect' ? 'Try Again' : 'Your Task'}
+                      </span>
+                    </div>
+                    <p style={{
+                      color: '#555',
+                      fontSize: '0.95rem',
+                      margin: '0 0 0.75rem 0',
+                    }}>
+                      {currentStep.task}
+                    </p>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <input
+                        type="text"
+                        value={userInput}
+                        onChange={(e) => {
+                          setUserInput(e.target.value);
+                          setValidationState('idle');
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleSubmitStep();
+                          }
+                        }}
+                        placeholder="Type your answer here..."
+                        style={{
+                          flex: 1,
+                          padding: '0.75rem 1rem',
+                          fontSize: '1rem',
+                          fontFamily: '"Fira Code", "Consolas", monospace',
+                          border: '1px solid #ddd',
+                          borderRadius: '6px',
+                          outline: 'none',
+                        }}
+                      />
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleSubmitStep}
+                        disabled={!userInput.trim()}
+                        style={{
+                          backgroundColor: userInput.trim() ? '#667eea' : '#ccc',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          padding: '0.75rem 1.5rem',
+                          fontSize: '1rem',
+                          fontWeight: '600',
+                          cursor: userInput.trim() ? 'pointer' : 'not-allowed',
+                        }}
+                      >
+                        Check
+                      </motion.button>
+                    </div>
+                    {validationState === 'incorrect' && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                          color: '#c62828',
+                          fontSize: '0.85rem',
+                          marginTop: '0.5rem',
+                          marginBottom: 0,
+                        }}
+                      >
+                        Hint: Look for "{currentStep.expectedCode}"
+                      </motion.p>
+                    )}
+                  </div>
+                )}
 
                 {/* Workspace - Single Canvas showing current state with highlights */}
                 <div style={{
@@ -604,25 +795,50 @@ export default function ExerciseView({ exercise, classroomId }: ExerciseViewProp
               ← Previous
             </motion.button>
 
-            <motion.button
-              whileHover={{ scale: currentStepIndex >= totalSteps ? 1 : 1.05 }}
-              whileTap={{ scale: currentStepIndex >= totalSteps ? 1 : 0.95 }}
-              onClick={handleNextStep}
-              disabled={currentStepIndex >= totalSteps}
-              style={{
-                backgroundColor: currentStepIndex >= totalSteps ? '#e0e0e0' : '#667eea',
-                color: 'white',
-                border: 'none',
-                padding: '0.875rem 2rem',
-                borderRadius: '8px',
-                fontSize: '1rem',
-                cursor: currentStepIndex >= totalSteps ? 'not-allowed' : 'pointer',
-                fontWeight: '600',
-                minWidth: '160px',
-              }}
-            >
-              {currentStepIndex >= totalSteps - 1 ? 'Complete ✓' : 'Next Step →'}
-            </motion.button>
+            {/* Show different button based on whether step is interactive */}
+            {isInteractiveStep ? (
+              <motion.button
+                whileHover={{ scale: validationState === 'correct' ? 1.05 : 1 }}
+                whileTap={{ scale: validationState === 'correct' ? 0.95 : 1 }}
+                onClick={handleNextStep}
+                disabled={validationState !== 'correct'}
+                style={{
+                  backgroundColor: validationState === 'correct' ? '#4CAF50' : '#e0e0e0',
+                  color: validationState === 'correct' ? 'white' : '#999',
+                  border: 'none',
+                  padding: '0.875rem 2rem',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  cursor: validationState === 'correct' ? 'pointer' : 'not-allowed',
+                  fontWeight: '600',
+                  minWidth: '160px',
+                }}
+              >
+                {validationState === 'correct' 
+                  ? (currentStepIndex >= totalSteps - 1 ? 'Complete ✓' : 'Continue →')
+                  : 'Complete the task above ↑'}
+              </motion.button>
+            ) : (
+              <motion.button
+                whileHover={{ scale: currentStepIndex >= totalSteps ? 1 : 1.05 }}
+                whileTap={{ scale: currentStepIndex >= totalSteps ? 1 : 0.95 }}
+                onClick={handleNextStep}
+                disabled={currentStepIndex >= totalSteps}
+                style={{
+                  backgroundColor: currentStepIndex >= totalSteps ? '#e0e0e0' : '#667eea',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.875rem 2rem',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  cursor: currentStepIndex >= totalSteps ? 'not-allowed' : 'pointer',
+                  fontWeight: '600',
+                  minWidth: '160px',
+                }}
+              >
+                {currentStepIndex >= totalSteps - 1 ? 'Complete ✓' : 'Next Step →'}
+              </motion.button>
+            )}
           </div>
         </motion.div>
       </motion.div>

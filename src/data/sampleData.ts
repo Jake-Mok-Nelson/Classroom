@@ -69,6 +69,9 @@ export const sampleClassrooms: ClassRoom[] = [
           id: 'step-1',
           title: 'Open the button tag',
           description: 'First, we need to create a button element using the <button> tag',
+          why: 'The <button> element is the semantic HTML way to create clickable buttons. Using the correct element improves accessibility and allows browsers to handle keyboard navigation automatically.',
+          task: 'Add an empty <button></button> element inside the container div',
+          expectedCode: '<button></button>',
           highlights: [
             {
               id: 'highlight-1',
@@ -118,6 +121,9 @@ export const sampleClassrooms: ClassRoom[] = [
           id: 'step-2',
           title: 'Add button text',
           description: 'Add the text that will appear on the button',
+          why: 'Button text tells users what action the button performs. Clear, descriptive text improves usability and helps screen readers announce the button\'s purpose.',
+          task: 'Add the text "Click Me" between the opening and closing button tags',
+          expectedCode: 'Click Me',
           highlights: [
             {
               id: 'highlight-2',
@@ -167,6 +173,9 @@ export const sampleClassrooms: ClassRoom[] = [
           id: 'step-3',
           title: 'Add styling class',
           description: 'Apply the "primary-btn" class for styling',
+          why: 'CSS classes allow us to reuse styles across multiple elements and separate styling from structure. The "primary-btn" class applies consistent branding to important action buttons.',
+          task: 'Add class="primary-btn" to the button element',
+          expectedCode: 'class="primary-btn"',
           highlights: [
             {
               id: 'highlight-3',

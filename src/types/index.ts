@@ -11,6 +11,9 @@ export interface Step {
   id: string;
   title: string;
   description: string;
+  why?: string; // Explanation of why this step is important
+  task?: string; // Description of what the user needs to do
+  expectedCode?: string; // The code the user should type/match to complete the step
   highlights: Highlight[];
   duration?: number; // Duration in milliseconds for the animation
   visualElements?: Array<{
